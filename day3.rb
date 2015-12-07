@@ -1,73 +1,45 @@
 require 'set'
 
-grid = Set.new
-x, y = 0, 0
-
-grid << [x, y]
-
-def handle_input(input)
-  grid = initialize_grid
-  x = 0
-  y = 0
-
-  input.each do |c|
-    x, y = update_position(x, y, c)
-    grid = update_grid(grid, x, y)
-  end
-
-  house_count(grid)
-end
-
-def santa_and_robot(input)
-  grid = initialize_grid
-  xs = 0
-  ys = 0
-  xr = 0
-  yr = 0
-
-  input.each_slice(2) do |c|
-    xs, ys = update_position(xs, ys, c[0])
-    xr, yr = update_position(xr, yr, c[1])
-    grid = update_grid(grid, xs, ys)
-    grid = update_grid(grid, xr, yr)
-  end
-
-  house_count(grid)
-end
-
-def initialize_grid
-  grid = {}
-  grid[0] = {}
-  grid[0][0] = 1
-  grid
-end
-
-def house_count(grid)
-  grid.reduce(0) { |sum, (_, y)| sum + y.values.reduce(:+) }
-end
-
-def update_grid(grid, x, y)
-  grid[x] ||= {}
-  grid[x][y] = 1
-  grid
-end
-
 def update_position(x, y, c)
   case c
-  when ">"
-    x += 1
-  when "<"
-    x -= 1
-  when "^"
-    y += 1
-  when "v"
-    y -= 1
+  when ">" then x += 1
+  when "<" then x -= 1
+  when "^" then y += 1
+  when "v" then y -= 1
   end
   [x, y]
 end
 
+def santa(input)
+  grid = Set.new
+  x, y = 0, 0
+
+  grid << [x, y]
+
+  input.each do |c|
+    x, y = update_position(x, y, c)
+    grid << [x, y]
+  end
+  grid.length
+end
+
+def santa_and_robot(input)
+  grid = Set.new
+  xs, ys = 0, 0
+  xr, yr = 0, 0
+  grid << [0, 0]
+
+  input.each_slice(2) do |c|
+    xs, ys = update_position(xs, ys, c[0])
+    xr, yr = update_position(xr, yr, c[1])
+    grid << [xs, ys]
+    grid << [xr, yr]
+  end
+  grid.length
+end
+
 s = DATA.read.chars.lazy
-p handle_input(s)
+p santa(s)
 p santa_and_robot(s)
 
 __END__
